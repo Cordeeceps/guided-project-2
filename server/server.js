@@ -118,18 +118,23 @@ app.get('/api/films/:id/characters', async (req, res) => {
             }, {
               '$lookup': {
                 'from': 'characters', 
-                'localField': 'films_characters.id', 
-                'foreignField': 'character_id', 
+                'localField': 'films_characters.character_id', 
+                'foreignField': 'id', 
                 'as': 'charactersInFilm'
+              }
+            }, {
+              '$project': {
+                'charactersInFilm': 1, 
+                '_id': 0
               }
             }
           ];
 
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
-        const collection = db.collection('films_characters');
+        const collection = db.collection('films');
         const cursor = collection.aggregate(agg);
-        //const charactersInFilm = await collection.find({film_id : +req.params.id}).toArray();
+        const charactersInFilm = await cursor.toArray();
         res.json(charactersInFilm);
     } catch (err) {
         console.error("Error:", err);
@@ -139,10 +144,34 @@ app.get('/api/films/:id/characters', async (req, res) => {
 
 app.get('/api/films/:id/planets', async (req, res) => {
     try {
+        const agg = [
+            {
+              '$lookup': {
+                'from': 'films_planets', 
+                'localField': 'id', 
+                'foreignField': 'film_id', 
+                'as': 'films_planets'
+              }
+            }, {
+              '$lookup': {
+                'from': 'planets', 
+                'localField': 'films_planets.planet_id', 
+                'foreignField': 'id', 
+                'as': 'planetsInFilm'
+              }
+            }, {
+              '$project': {
+                'planetsInFilm': 1, 
+                '_id': 0
+              }
+            }
+          ];
+
         const client = await MongoClient.connect(url);
         const db = client.db(dbName);
-        const collection = db.collection('films_planets');
-        const planetsInFilm = await collection.find({film_id : +req.params.id}).toArray();
+        const collection = db.collection('films');
+        const cursor = collection.aggregate(agg);
+        const planetsInFilm = await cursor.toArray();
         res.json(planetsInFilm);
     } catch (err) {
         console.error("Error:", err);
