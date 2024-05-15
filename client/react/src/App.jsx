@@ -1,51 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import '..components/App.css';
-//import Index from "./components/Index";
-//import Planet from "./components/Planet";
+import React , { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 
-const App = () => {
-  const [characters, setCharacters] = useState([]);
-  const [matchingCharacters, setMatchingCharacters] = useState([]);
-
-  useEffect(() => {
-    getCharacters();
-  }, []);
-
-  const getCharacters = async () => {
-    const url = 'https://swapi2.azurewebsites.net/api/characters'; //change to http://localhost:3000/swapi/characters for MongoDB 
-    try {
-      const fetchedCharacters = await fetch(url).then(res => res.json());
-      setCharacters(fetchedCharacters);
-    } catch (ex) {
-      console.error("Error reading characters.", ex.message);
-    }
-  }
-
-  const filterCharacters = (event) => {
-    const searchString = event.target.value;
-    const re = new RegExp(searchString, "i");
-    const filteredCharacters = characters.filter(character => re.test(character.name));
-    setMatchingCharacters(filteredCharacters);
-  }
-
-  const goToCharacterPage = (id) => {
-    window.location = `/character.html?id=${id}`;
-  }
+function App() {
+  const [count, setCount] = useState(0)
 
   return (
-    <div>
-      <h1>Star Wars Universe Lookup</h1>
-      <label htmlFor="searchString"><h2>Who are you looking for?</h2></label>
-      <input id="searchString" onInput={filterCharacters} autoComplete="off" />
-      <section id="charactersList">
-        {matchingCharacters.map(character => (
-          <div key={character.id} onClick={() => goToCharacterPage(character.id)}>
-            {character.name}
-          </div>
-        ))}
-      </section>
-    </div>
-  );
+    <>
+      <div>
+        <a href="https://vitejs.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.jsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </>
+  )
 }
 
-export default App;
+export default App
